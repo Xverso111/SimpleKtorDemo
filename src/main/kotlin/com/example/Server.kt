@@ -1,14 +1,13 @@
 package com.example
 
+import com.example.routes.javaDayRoutes
+import com.ryanharter.ktor.moshi.moshi
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.ContentNegotiation
 import io.ktor.gson.GsonConverter
 import io.ktor.http.ContentType
-import io.ktor.http.content.resources
-import io.ktor.http.content.static
-import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.get
 import io.ktor.routing.routing
@@ -18,31 +17,22 @@ import io.ktor.server.netty.NettyApplicationEngine
 
 class Server {
 
-    val module = fun Application.(){
+    val module = fun Application.() {
         install(ContentNegotiation) {
             register(ContentType.Application.Json, GsonConverter())
             register(ContentType.Text.Plain, GsonConverter())
         }
 
         routing {
-            get("/") {
-                call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
+            get("/test"){
+                call.respondText("hello world!", contentType = ContentType.Text.Plain)
             }
-
-            // Static feature. Try to access `/static/ktor_logo.svg`
-            static("/static") {
-                resources("static")
-            }
-
-            get("/json/gson") {
-                call.respond(mapOf("hello" to "world"))
-            }
+            javaDayRoutes()
         }
-
     }
 
     fun create(): NettyApplicationEngine {
-        return embeddedServer(Netty, 8089) { module() }
+        return embeddedServer(Netty, 8089, "127.0.0.1") { module() }
     }
 
 }

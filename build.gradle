@@ -15,12 +15,6 @@ group 'SimpleKtorDemo'
 version '0.0.1'
 mainClassName = "MainKt"
 
-sourceSets {
-    main.kotlin.srcDirs += "src/main/kotlin"
-    test.kotlin.srcDirs += "src/test/kotlin"
-    main.resources.srcDirs = "src/main/resources"
-    test.resources.srcDirs = ['testresources']
-}
 
 repositories {
     mavenLocal()
@@ -35,5 +29,9 @@ dependencies {
     compile "io.ktor:ktor-server-core:$ktor_version"
     compile "io.ktor:ktor-server-host-common:$ktor_version"
     compile "io.ktor:ktor-gson:$ktor_version"
+    compile group: 'org.twitter4j', name: 'twitter4j-core', version: '4.0.7'
+    compile 'com.ryanharter.ktor:ktor-moshi:1.0.1'
+
+
     testCompile "io.ktor:ktor-server-tests:$ktor_version"
 }
