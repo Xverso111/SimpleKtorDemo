@@ -1,5 +1,7 @@
 package com.example.twitter
 
+import com.example.domain.Tweet
+import com.example.domain.TweetQuery
 import twitter4j.Query
 import twitter4j.Status
 import twitter4j.TwitterFactory
@@ -54,6 +56,11 @@ class TwitterClient {
         val result = twitter.search(query)
 
         return result.tweets
+    }
+
+    fun searchByQuery(query: TweetQuery):List<Tweet> {
+        //TODO: not yet implemented
+        return emptyList()
     }
 
 }
