@@ -6,4 +6,4 @@
 *.ipr
 *.iws
 gradle/
-twitter4j.propertiesgst
+twitter4j.properties
