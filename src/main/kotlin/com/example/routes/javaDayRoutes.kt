@@ -15,7 +15,7 @@ fun Route.javaDayRoutes() = route("/twitter") {
         call.respond(tweets)
     }
 
-    get("/count"){
+    get("/top"){
         call.respond(client.count())
     }
 

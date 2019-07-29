@@ -1,5 +1,6 @@
 package com.example.domain
 
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -20,6 +21,8 @@ class TweetQueryTest {
 
     @Test
     internal fun `should return a Query`() {
-        println(TweetQuery(UUID.randomUUID(), "name", listOf("ss", "dc")).toQuery().query)
+        val query = TweetQuery(UUID.randomUUID(), "name", listOf("ss", "dc")).toQuery()
+
+        assertThat(query.query).isEqualTo("ss AND dc")
     }
 }
