@@ -7,8 +7,8 @@ import java.util.*
 
 class PepeService(val twitterClient: TwitterClient) {
 
-    fun topTweeters(): Map<Long, Int> {
-        val resultsMap = mutableMapOf<Long, Int>()
+    fun topTweeters(): Map<String, Int> {
+        val resultsMap = mutableMapOf<String, Int>()
         val topTweetersQuery = TweetQuery(
             UUID.randomUUID(),
             "topTweeters",
@@ -18,9 +18,14 @@ class PepeService(val twitterClient: TwitterClient) {
         )
 
         twitterClient.searchByQuery(topTweetersQuery).forEach {
-            resultsMap[it.userId] = resultsMap[it.userId]?.plus(1) ?: 1 // TODO:horas en explicar
+            resultsMap[it.userName] = resultsMap[it.userName]?.plus(1) ?: 1 // TODO:horas en explicar
         }
+
+        // Filtrar por horas
 
         return resultsMap
     }
 }
+
+// TODO: Mencionar que tal ves sea mejor devolver un data class con el nombre de usuario, Id y acumulado
+// y deveriamos acumular por id y no por username

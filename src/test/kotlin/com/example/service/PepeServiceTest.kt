@@ -19,29 +19,29 @@ class PepeServiceTest {
     fun `should return a map of tweets`() {
         val twitterClient = mockk<TwitterClient>()
         val tweet = randomTweet()
-        val expectedTable = mapOf(tweet.userId to 1)
+        val expectedTable = mapOf(tweet.userName to 1)
 
         every { twitterClient.searchByQuery(any()) } returns listOf(tweet)
 
-        val topTable: Map<Long, Int> = PepeService(twitterClient).topTweeters()
+        val topTable = PepeService(twitterClient).topTweeters()
 
         assertThat(topTable).containsAllEntriesOf(expectedTable)
     }
 
     @Test
-    fun `should  return accumulated tweets`() {
+    fun `should return accumulated tweets`() {
         val twitterClient = mockk<TwitterClient>()
         val tweet = randomTweet()
         val secondTweet = randomTweet()
 
         val expectedTable = mapOf(
-            tweet.userId to 2,
-            secondTweet.userId to 1
+            tweet.userName to 2,
+            secondTweet.userName to 1
         )
 
         every { twitterClient.searchByQuery(any()) } returns listOf(tweet, tweet, secondTweet)
 
-        val topTable: Map<Long, Int> = PepeService(twitterClient).topTweeters()
+        val topTable = PepeService(twitterClient).topTweeters()
 
         assertThat(topTable).containsAllEntriesOf(expectedTable)
     }
@@ -54,3 +54,5 @@ class PepeServiceTest {
     ) = Tweet(userId, userName, text, tweetDate)
 
 }
+
+// TODO: lo facil que es cambiar el tipado de las variables sin tener que cambiar su declaracion
