@@ -14,7 +14,6 @@ import java.time.LocalDateTime
 //TODO: la primera ves que usemos un list of comentar que es mas legible que el metodo of que tiene java 9
 class PepeServiceTest {
 
-
     @Test
     fun `should return a map of tweets`() {
         val twitterClient = mockk<TwitterClient>()
@@ -44,6 +43,25 @@ class PepeServiceTest {
         val topTable = PepeService(twitterClient).topTweeters()
 
         assertThat(topTable).containsAllEntriesOf(expectedTable)
+    }
+
+    @Test
+    fun `should return tweets that are inside the specified time range`() {
+        val now = LocalDateTime.now()
+        val nowMinus10Mins = LocalDateTime.now().minusMinutes(10)
+        val nowPlus10Mins = LocalDateTime.now().plusMinutes(10)
+        val twitterClient = mockk<TwitterClient>()
+        val tweetInsideRange = randomTweet(tweetDate = now)
+        val tweetBelowRange = randomTweet(tweetDate = nowMinus10Mins.minusNanos(1))
+        val tweetAboveRange = randomTweet(tweetDate = nowPlus10Mins.plusNanos(1))
+        val dateRange = DateRange(nowMinus10Mins, nowPlus10Mins)
+
+        every { twitterClient.searchByQuery(any()) } returns listOf(tweetInsideRange, tweetBelowRange, tweetAboveRange)
+
+        val topTable = PepeService(twitterClient).topTweeters(dateRange)
+
+        assertThat(topTable).doesNotContainKeys(tweetBelowRange.userName, tweetAboveRange.userName)
+        assertThat(topTable).containsKeys(tweetInsideRange.userName)
     }
 
     private fun randomTweet(

@@ -1,7 +1,7 @@
 package com.example.domain
 
+import com.example.service.DateRange
 import twitter4j.Query
-import java.time.LocalDateTime
 import java.util.*
 
 //TODO:completar validaciones o reglas de negocio y escribir las pruebas
@@ -9,8 +9,7 @@ class TweetQuery(
     val id: UUID,
     nombre: String,
     hashTags: List<String>,
-    val startDate: LocalDateTime? = null,
-    val endDate: LocalDateTime? = null,
+    val dateRange: DateRange? = null,
     val allowRetweets: Boolean = false
 ) {
     val hashTags = hashTags
