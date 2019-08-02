@@ -6,15 +6,16 @@ import java.time.LocalDateTime
 import java.util.*
 
 class PepeService(
-    val twitterClient: TwitterClient
+    private val twitterClient: TwitterClient
 ) {
 
+    //TODO: Buscar Hot Reload
     fun topTweeters(dateRange: DateRange? = null): Map<String, Int> {
         val resultsMap = mutableMapOf<String, Int>()
         val topTweetersQuery = TweetQuery(
             UUID.randomUUID(),
             "topTweeters",
-            listOf("JavaDayEcuador", "nuestro"),
+            listOf("#JavaDayEcuador"),
             dateRange
         )
         val retrievedTweets = twitterClient.searchByQuery(topTweetersQuery)

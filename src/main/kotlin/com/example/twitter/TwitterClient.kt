@@ -61,7 +61,6 @@ class TwitterClient {
     }
 
     //TODO: Esto debería lanzarse en una coroutine. Porque puede tomar mucho tiempo
-    @InternalAPI
     fun searchByQuery(query: TweetQuery):List<Tweet> {
         // TODO: Hacer esto más funcional?
         val query = query.toQuery()
@@ -78,7 +77,8 @@ class TwitterClient {
 }
 
 //TODO: Explicar esta cosa
-@InternalAPI
+// TODO: Test this
+@UseExperimental(InternalAPI::class)
 private fun Status.tweet() = Tweet(this.id, this.user.screenName, this.text, this.createdAt.toLocalDateTime())
 
 
