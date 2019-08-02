@@ -10,6 +10,9 @@ import io.ktor.routing.route
 
 fun Route.javaDayRoutes() = route("/twitter") {
 
+    // TODO: SERDES -> Moshi
+    // TODO: Pasar Twitter4J a builder
+    // TODO: Usar KConfig para las env variables
     // TODO: JWT Authorization
     // TODO: Persistencia
     // TODO: inyeccion de dependencias
