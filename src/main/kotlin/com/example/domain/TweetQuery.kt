@@ -19,8 +19,16 @@ class TweetQuery(
         .notBlank("Cannot create a TweetQuery without a name")
 
     fun toQuery(): Query {
-        val queryString = hashTags.reduce { acc, hashtag -> "$acc AND $hashtag" }
-        return Query(queryString)
+        val queryString = hashTags
+            .reduce { acc, hashtag -> "$acc AND $hashtag" }
+            .plus(if(allowRetweets) "-filter:retweets" else "")
+
+        return Query(queryString).apply {
+            dateRange?.let {
+                since = it.start.toString()
+                until = it.end.toString()
+            }
+        }
     }
 }
 

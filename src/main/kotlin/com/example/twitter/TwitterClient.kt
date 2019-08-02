@@ -2,6 +2,8 @@ package com.example.twitter
 
 import com.example.domain.Tweet
 import com.example.domain.TweetQuery
+import io.ktor.util.InternalAPI
+import io.ktor.util.toLocalDateTime
 import twitter4j.Query
 import twitter4j.Status
 import twitter4j.TwitterFactory
@@ -58,11 +60,25 @@ class TwitterClient {
         return result.tweets
     }
 
+    //TODO: Esto debería lanzarse en una coroutine. Porque puede tomar mucho tiempo
+    @InternalAPI
     fun searchByQuery(query: TweetQuery):List<Tweet> {
-        //TODO: not yet implemented
-        return emptyList()
+        // TODO: Hacer esto más funcional?
+        val query = query.toQuery()
+        var result = twitter.search(query)
+        val tweets = mutableListOf<Status>().apply { addAll(result.tweets) }
+        while (result.hasNext()) {
+            val nextQuery = result.nextQuery()
+            result = twitter.search(nextQuery)
+            tweets.addAll(result.tweets)
+        }
+        return tweets.map(Status::tweet)
     }
 
 }
+
+//TODO: Explicar esta cosa
+@InternalAPI
+private fun Status.tweet() = Tweet(this.id, this.user.screenName, this.text, this.createdAt.toLocalDateTime())
 
 

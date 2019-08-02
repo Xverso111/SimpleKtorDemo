@@ -27,8 +27,6 @@ class PepeService(
             resultsMap[it.userName] = resultsMap[it.userName]?.plus(1) ?: 1
         }
 
-        // Filtrar por horas
-
         return resultsMap
     }
 }
@@ -36,8 +34,8 @@ class PepeService(
 // TODO: usar un Object
 // TODO: data class -> overrides equals/hashcode/toString...
 data class DateRange(
-    private val start: LocalDateTime,
-    private val end: LocalDateTime
+    val start: LocalDateTime,
+    val end: LocalDateTime
 ) {
 
     // validar from is before to
