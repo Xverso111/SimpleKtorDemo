@@ -1,13 +1,19 @@
 package com.example.service
 
 import com.example.domain.TweetQuery
+import com.example.repository.QueryRepository
 import com.example.twitter.TwitterClient
-import java.time.LocalDateTime
+import org.joda.time.LocalDateTime
 import java.util.*
 
 class PepeService(
-    private val twitterClient: TwitterClient
+    private val twitterClient: TwitterClient,
+    private val queryRepository: QueryRepository
 ) {
+
+    fun createQuery(query: TweetQuery) {
+        queryRepository.insertQuery(query)
+    }
 
     //TODO: Buscar Hot Reload
     fun topTweeters(dateRange: DateRange? = null): Map<String, Int> {

@@ -5,17 +5,21 @@ import twitter4j.Query
 import java.util.*
 
 //TODO:completar validaciones o reglas de negocio y escribir las pruebas
+//TODO: change the name of this class -> when colliding with Twitter4j query use aliases
 class TweetQuery(
     val id: UUID,
-    nombre: String,
+    name: String,
     hashTags: List<String>,
     val dateRange: DateRange? = null,
     val allowRetweets: Boolean = false
 ) {
-    val hashTags = hashTags
-        .notEmpty("Cannot create a TweetQuery without hashtags")
+    // TODO: Validate name length -> max 50 chars
+    // TODO: Hashtags shouldn't include #, should be manually put
 
-    val nombre = nombre
+    val hashTags = hashTags
+        .notEmpty("Cannot create a TweetQuery without hashTags")
+
+    val nombre = name
         .notBlank("Cannot create a TweetQuery without a name")
 
     fun toQuery(): Query {

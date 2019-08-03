@@ -1,0 +1,5 @@
+CREATE TABLE HashTag (
+  "IdHashTag" SERIAL PRIMARY KEY,
+  "IdQuery" UUID NOT NULL REFERENCES Query("IdQuery"),
+  "TextHashTag" VARCHAR(50) NOT NULL
+);

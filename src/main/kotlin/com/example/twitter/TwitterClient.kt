@@ -4,6 +4,7 @@ import com.example.domain.Tweet
 import com.example.domain.TweetQuery
 import io.ktor.util.InternalAPI
 import io.ktor.util.toLocalDateTime
+import org.joda.time.LocalDateTime
 import twitter4j.Query
 import twitter4j.Status
 import twitter4j.TwitterFactory
@@ -60,7 +61,8 @@ class TwitterClient {
         return result.tweets
     }
 
-    //TODO: Esto debería lanzarse en una coroutine. Porque puede tomar mucho tiempo
+    // TODO: Esto debería lanzarse en una coroutine. Porque puede tomar mucho tiempo
+    // TODO: El resultado debería ser guardado en algún lado para luego ser consultado
     fun searchByQuery(query: TweetQuery):List<Tweet> {
         // TODO: Hacer esto más funcional?
         val query = query.toQuery()
@@ -79,6 +81,6 @@ class TwitterClient {
 //TODO: Explicar esta cosa
 // TODO: Test this
 @UseExperimental(InternalAPI::class)
-private fun Status.tweet() = Tweet(this.id, this.user.screenName, this.text, this.createdAt.toLocalDateTime())
+private fun Status.tweet() = Tweet(this.id, this.user.screenName, this.text, LocalDateTime(this.createdAt.toInstant()))
 
 
