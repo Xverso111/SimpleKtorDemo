@@ -41,7 +41,7 @@ fun Route.javaDayRoutes() = route("/twitter") {
 
     get("/query/{id}/top"){
         val command = UUIDCommand(call.parameters["id"])
-        val topTweeters = service.topTweeters(null).map { it.toPair()}.sortedByDescending { it.second }
+        val topTweeters = service.topTweeters(command).map { it.toPair()}.sortedByDescending { it.second }
         call.respond(topTweeters)
     }
 }

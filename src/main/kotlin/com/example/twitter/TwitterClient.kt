@@ -81,6 +81,6 @@ class TwitterClient {
 //TODO: Explicar esta cosa
 // TODO: Test this
 @UseExperimental(InternalAPI::class)
-private fun Status.tweet() = Tweet(this.id, this.user.screenName, this.text, LocalDateTime(this.createdAt.toInstant()))
+private fun Status.tweet() = Tweet(this.id, this.user.screenName, this.text, LocalDateTime(this.createdAt.toInstant().toEpochMilli()))
 
 
