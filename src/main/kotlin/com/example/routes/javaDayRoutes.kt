@@ -1,5 +1,6 @@
 package com.example.routes
 
+import com.example.command.UUIDCommand
 import com.example.domain.TweetQuery
 import com.example.repository.QueryRepository
 import com.example.service.PepeService
@@ -38,11 +39,11 @@ fun Route.javaDayRoutes() = route("/twitter") {
         call.respond(HttpStatusCode.OK, IdResponse(query.id))
     }
 
-    get("/top"){
+    get("/query/{id}/top"){
+        val command = UUIDCommand(call.parameters["id"])
         val topTweeters = service.topTweeters(null).map { it.toPair()}.sortedByDescending { it.second }
         call.respond(topTweeters)
     }
-
 }
 
 data class IdResponse(val id: UUID)

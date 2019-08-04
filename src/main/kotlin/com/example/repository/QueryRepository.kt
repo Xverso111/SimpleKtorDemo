@@ -1,9 +1,11 @@
 package com.example.repository
 
 import com.example.domain.TweetQuery
+import com.example.service.DateRange
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.batchInsert
 import org.jetbrains.exposed.sql.insert
+import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.DateTime
 import java.time.ZoneOffset
@@ -33,10 +35,38 @@ class QueryRepository {
             this[HashtagTable.idQuery] = queryId
             this[HashtagTable.text] = it
         }.map { it[HashtagTable.id] }
+
+    fun getQuery(id: UUID) = transaction {
+        QueryTable
+            .innerJoin(HashtagTable)
+            .select { QueryTable.id eq id }
+            .asSequence()
+            .groupBy { it[QueryTable.id] }
+            .map {
+                it.value.first().let { row ->
+                    TweetQuery(
+                        row[QueryTable.id],
+                        row[QueryTable.name],
+                        it.value.map { hashtag ->
+                            hashtag[HashtagTable.text]
+                        },
+                        row[QueryTable.startDate]?.let {
+                            DateRange(
+                                // TODO: Explain that double bangs should be avoided at all costs!!!
+                                row[QueryTable.startDate]!!.toLocalDateTime(),
+                                row[QueryTable.endDate]!!.toLocalDateTime()
+                            )
+                        },
+                        row[QueryTable.allowRetweets]
+                    )
+                }
+
+            }.firstOrNull()
+    }
 }
 
 // TODO: Explain kotlin object
-// TODO: POSTGRES end up beign case-sensitive :( Should I use underscore instead of Uppercase. Ask Pablo his standard for naming columns
+// TODO: POSTGRES end up being case-sensitive :( Should I use underscore instead of Uppercase. Ask Pablo his standard for naming columns
 object QueryTable: Table("Query") {
     val id = uuid("IdQuery").primaryKey()
     val name = varchar("NameQuery", 50).uniqueIndex()

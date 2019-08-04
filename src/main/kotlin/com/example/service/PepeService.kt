@@ -1,5 +1,6 @@
 package com.example.service
 
+import com.example.command.UUIDCommand
 import com.example.domain.TweetQuery
 import com.example.repository.QueryRepository
 import com.example.twitter.TwitterClient
@@ -16,18 +17,13 @@ class PepeService(
     }
 
     //TODO: Buscar Hot Reload
-    fun topTweeters(dateRange: DateRange? = null): Map<String, Int> {
+    fun topTweeters(command: UUIDCommand): Map<String, Int> {
         val resultsMap = mutableMapOf<String, Int>()
-        val topTweetersQuery = TweetQuery(
-            UUID.randomUUID(),
-            "topTweeters",
-            listOf("#JavaDayEcuador"),
-            dateRange
-        )
+        val topTweetersQuery = queryRepository.getQuery(command.uuid) ?: throw Exception("Query not found")
         val retrievedTweets = twitterClient.searchByQuery(topTweetersQuery)
 
-        val filteredTweetsByDate = if (dateRange != null) {
-            retrievedTweets.filter { dateRange contains it.tweetedDate }
+        val filteredTweetsByDate = if (topTweetersQuery.dateRange != null) {
+            retrievedTweets.filter { topTweetersQuery.dateRange contains it.tweetedDate }
         } else retrievedTweets
 
         filteredTweetsByDate.forEach {
