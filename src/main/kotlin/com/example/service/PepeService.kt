@@ -4,6 +4,10 @@ import com.example.command.UUIDCommand
 import com.example.domain.TweetQuery
 import com.example.repository.QueryRepository
 import com.example.twitter.TwitterClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import org.joda.time.LocalDateTime
 import java.util.*
 
@@ -12,16 +16,15 @@ class PepeService(
     private val queryRepository: QueryRepository
 ) {
 
-    fun createQuery(query: TweetQuery) {
+    suspend fun createQuery(query: TweetQuery) {
         queryRepository.insertQuery(query)
     }
 
     //TODO: Buscar Hot Reload
-    fun topTweeters(command: UUIDCommand): Map<String, Int> {
+    suspend fun topTweeters(command: UUIDCommand) {
         val resultsMap = mutableMapOf<String, Int>()
         val topTweetersQuery = queryRepository.getQuery(command.uuid) ?: throw Exception("Query not found")
         val retrievedTweets = twitterClient.searchByQuery(topTweetersQuery)
-
         val filteredTweetsByDate = if (topTweetersQuery.dateRange != null) {
             retrievedTweets.filter { topTweetersQuery.dateRange contains it.tweetedDate }
         } else retrievedTweets
@@ -29,8 +32,7 @@ class PepeService(
         filteredTweetsByDate.forEach {
             resultsMap[it.userName] = resultsMap[it.userName]?.plus(1) ?: 1
         }
-
-        return resultsMap
+        println("Terminó de buscar las cosas")
     }
 }
 

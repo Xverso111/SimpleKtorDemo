@@ -13,6 +13,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
+import kotlinx.coroutines.async
 import java.util.*
 
 fun Route.javaDayRoutes() = route("/twitter") {
@@ -41,8 +42,9 @@ fun Route.javaDayRoutes() = route("/twitter") {
 
     get("/query/{id}/top"){
         val command = UUIDCommand(call.parameters["id"])
-        val topTweeters = service.topTweeters(command).map { it.toPair()}.sortedByDescending { it.second }
-        call.respond(topTweeters)
+        val topTweeters = async { service.topTweeters(command) } //.map { it.toPair()}.sortedByDescending { it.second }
+        println("Ya respondí")
+        call.respond(HttpStatusCode.OK)
     }
 }
 

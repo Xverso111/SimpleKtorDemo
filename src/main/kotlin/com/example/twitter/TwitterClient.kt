@@ -4,6 +4,8 @@ import com.example.domain.Tweet
 import com.example.domain.TweetQuery
 import io.ktor.util.InternalAPI
 import io.ktor.util.toLocalDateTime
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.joda.time.LocalDateTime
 import twitter4j.Query
 import twitter4j.Status
@@ -63,7 +65,8 @@ class TwitterClient {
 
     // TODO: Esto debería lanzarse en una coroutine. Porque puede tomar mucho tiempo
     // TODO: El resultado debería ser guardado en algún lado para luego ser consultado
-    fun searchByQuery(query: TweetQuery):List<Tweet> {
+    // TODO: 180 requests cada 15 mins -> 1 request every 5 seconds
+    suspend fun searchByQuery(query: TweetQuery):List<Tweet> = withContext(Dispatchers.IO) {
         // TODO: Hacer esto más funcional?
         val query = query.toQuery()
         var result = twitter.search(query)
@@ -73,7 +76,7 @@ class TwitterClient {
             result = twitter.search(nextQuery)
             tweets.addAll(result.tweets)
         }
-        return tweets.map(Status::tweet)
+        tweets.map(Status::tweet)
     }
 
 }
