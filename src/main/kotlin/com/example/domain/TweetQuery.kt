@@ -7,7 +7,7 @@ import java.util.*
 //TODO:completar validaciones o reglas de negocio y escribir las pruebas
 //TODO: change the name of this class -> when colliding with Twitter4j query use aliases
 class TweetQuery(
-    val id: UUID,
+    val id: UUID = UUID.randomUUID(),
     name: String,
     hashTags: List<String>,
     val dateRange: DateRange? = null,

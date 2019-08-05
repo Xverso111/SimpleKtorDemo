@@ -36,13 +36,14 @@ fun Route.javaDayRoutes() = route("/twitter") {
     post("/query") {
         val query = call.receive<TweetQuery>()
         service.createQuery(query)
-        // TODO: Should we return just the ID or the whole object with the id?
+        // TODO: Should we return just the ID or the whole object with the id? -> Check Rest standards
         call.respond(HttpStatusCode.OK, IdResponse(query.id))
     }
 
     get("/query/{id}/top"){
+        // TODO: Maybe command is not the name?
         val command = UUIDCommand(call.parameters["id"])
-        val topTweeters = async { service.topTweeters(command) } //.map { it.toPair()}.sortedByDescending { it.second }
+        val topTweeters = service.topTweeters(command) //.map { it.toPair()}.sortedByDescending { it.second }
         println("Ya respondí")
         call.respond(HttpStatusCode.OK)
     }

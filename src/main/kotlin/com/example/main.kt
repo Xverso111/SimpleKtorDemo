@@ -8,6 +8,7 @@ val databaseUser = "pepe"
 val databasePassword = "12345678"
 val databaseUrl = "jdbc:postgresql://localhost/tweet-query-db"
 
+// TODO: Hacer como hicimos en Delaware
 fun dataSource() =
     BasicDataSource().apply {
         driverClassName = "org.postgresql.Driver"

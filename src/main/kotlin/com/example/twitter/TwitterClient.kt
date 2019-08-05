@@ -68,6 +68,7 @@ class TwitterClient {
     // TODO: 180 requests cada 15 mins -> 1 request every 5 seconds
     suspend fun searchByQuery(query: TweetQuery):List<Tweet> = withContext(Dispatchers.IO) {
         // TODO: Hacer esto más funcional?
+        // TODO: Put a 5/3 seconds delay?
         val query = query.toQuery()
         var result = twitter.search(query)
         val tweets = mutableListOf<Status>().apply { addAll(result.tweets) }

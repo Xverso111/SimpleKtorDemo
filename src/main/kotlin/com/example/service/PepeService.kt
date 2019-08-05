@@ -8,6 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
+import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.LocalDateTime
 import java.util.*
 
@@ -16,7 +17,10 @@ class PepeService(
     private val queryRepository: QueryRepository
 ) {
 
+    // TODO: How to test suspend functions
     suspend fun createQuery(query: TweetQuery) {
+        // TODO: Can I have service level transactions like Spring? How can we make the same on javascript?
+        // TODO: Verify duplicated name
         queryRepository.insertQuery(query)
     }
 

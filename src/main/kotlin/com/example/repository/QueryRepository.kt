@@ -73,16 +73,17 @@ class QueryRepository {
 
 // TODO: Explain kotlin object
 // TODO: POSTGRES end up being case-sensitive :( Should I use underscore instead of Uppercase. Ask Pablo his standard for naming columns
-object QueryTable: Table("Query") {
-    val id = uuid("IdQuery").primaryKey()
-    val name = varchar("NameQuery", 50).uniqueIndex()
-    val startDate = datetime("StartDateQuery").nullable()
-    val endDate = datetime("EndDateQuery").nullable()
-    val allowRetweets = bool("AllowRetweetsQuery")
+object QueryTable: Table("query") {
+    val id = uuid("id").primaryKey()
+    val name = varchar("name", 50).uniqueIndex()
+    val startDate = datetime("start_date").nullable()
+    val endDate = datetime("end_date").nullable()
+    // TODO: save the hashtags on a JSONB array
+    val allowRetweets = bool("allow_retweets")
 }
 
-object HashtagTable: Table("HashTag") {
-    val id = integer("IdHashTag").autoIncrement().primaryKey()
-    val idQuery = uuid("IdQuery").references(QueryTable.id)
-    val text = varchar("TextHashTag", 50)
+object HashtagTable: Table("hash_tag") {
+    val id = integer("id").autoIncrement().primaryKey()
+    val idQuery = uuid("id_query").references(QueryTable.id)
+    val text = varchar("text", 50)
 }
