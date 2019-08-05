@@ -34,7 +34,6 @@ dependencies {
     compile "ch.qos.logback:logback-classic:$logback_version"
     compile "io.ktor:ktor-server-core:$ktor_version"
     compile "io.ktor:ktor-server-host-common:$ktor_version"
-//    compile "io.ktor:ktor-gson:$ktor_version"
     compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.9.7'
     compile group: 'io.ktor', name: 'ktor-jackson', version: ktor_version
     compile group: 'org.jetbrains.exposed', name: 'exposed', version: '0.14.1'

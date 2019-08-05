@@ -1,11 +1,13 @@
 package com.example.domain
 
 import com.example.service.DateRange
+import com.squareup.moshi.JsonClass
 import twitter4j.Query
 import java.util.*
 
 //TODO:completar validaciones o reglas de negocio y escribir las pruebas
 //TODO: change the name of this class -> when colliding with Twitter4j query use aliases
+@JsonClass(generateAdapter = true)
 class TweetQuery(
     val id: UUID = UUID.randomUUID(),
     name: String,
@@ -19,7 +21,7 @@ class TweetQuery(
     val hashTags = hashTags
         .notEmpty("Cannot create a TweetQuery without hashTags")
 
-    val nombre = name
+    val name = name
         .notBlank("Cannot create a TweetQuery without a name")
 
     fun toQuery(): Query {

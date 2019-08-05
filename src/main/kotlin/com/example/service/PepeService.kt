@@ -4,6 +4,7 @@ import com.example.command.UUIDCommand
 import com.example.domain.TweetQuery
 import com.example.repository.QueryRepository
 import com.example.twitter.TwitterClient
+import com.squareup.moshi.JsonClass
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
@@ -25,7 +26,7 @@ class PepeService(
     }
 
     //TODO: Buscar Hot Reload
-    suspend fun topTweeters(command: UUIDCommand) {
+    suspend fun topTweeters(command: UUIDCommand): Map<String, Int> {
         val resultsMap = mutableMapOf<String, Int>()
         // TODO: In case the query is not found -> the client should be notified on the same request
         val topTweetersQuery = queryRepository.getQuery(command.uuid) ?: throw Exception("Query not found")
@@ -37,12 +38,13 @@ class PepeService(
         filteredTweetsByDate.forEach {
             resultsMap[it.userName] = resultsMap[it.userName]?.plus(1) ?: 1
         }
-        println("Terminó de buscar las cosas")
+        return resultsMap
     }
 }
 
 // TODO: usar un Object
 // TODO: data class -> overrides equals/hashcode/toString...
+@JsonClass(generateAdapter = true)
 data class DateRange(
     val start: LocalDateTime,
     val end: LocalDateTime

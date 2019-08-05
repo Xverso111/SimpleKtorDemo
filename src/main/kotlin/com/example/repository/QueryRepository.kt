@@ -3,8 +3,6 @@ package com.example.repository
 import com.example.domain.TweetQuery
 import com.example.service.DateRange
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ObsoleteCoroutinesApi
-import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.withContext
 import org.jetbrains.exposed.sql.Table
 import org.jetbrains.exposed.sql.batchInsert
@@ -22,7 +20,7 @@ class QueryRepository {
             transaction {
                 QueryTable.insert {
                     it[id] = query.id
-                    it[name] = query.nombre
+                    it[name] = query.name
                     // TODO: I switch to Joda Datetime which was easier to integrate with everything(JSON SerDes and Exposed), should we keep it?
                     it[startDate] = query.dateRange?.start?.toDateTime()
                     it[endDate] = query.dateRange?.end?.toDateTime()
