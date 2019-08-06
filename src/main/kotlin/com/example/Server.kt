@@ -4,7 +4,6 @@ import com.example.routes.javaDayRoutes
 import com.example.serializer.DateTimeAdapter
 import com.example.serializer.UUIDAdapter
 import com.ryanharter.ktor.moshi.moshi
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -16,21 +15,24 @@ import io.ktor.routing.routing
 import io.ktor.server.engine.embeddedServer
 import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
+import org.koin.ktor.ext.Koin
 
 
 class Server {
 
     val module = fun Application.() {
+        install(Koin) {
+            modules(injectionModule)
+        }
         install(ContentNegotiation) {
             moshi {
                 add(DateTimeAdapter())
                 add(UUIDAdapter())
-                add(KotlinJsonAdapterFactory())
             }
         }
 
         routing {
-            get("/test"){
+            get("/test") {
                 call.respondText("hello world!", contentType = ContentType.Text.Plain)
             }
             javaDayRoutes()

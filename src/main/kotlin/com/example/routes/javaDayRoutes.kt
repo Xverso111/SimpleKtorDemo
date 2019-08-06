@@ -13,7 +13,7 @@ import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
-import kotlinx.coroutines.async
+import org.koin.ktor.ext.inject
 import java.util.*
 
 fun Route.javaDayRoutes() = route("/twitter") {
@@ -25,8 +25,8 @@ fun Route.javaDayRoutes() = route("/twitter") {
     // TODO: Persistencia
     // TODO: inyeccion de dependencias
     // TODO: Set up exception handling -> StatusPages
-    val client = TwitterClient()
-    val queryRepository = QueryRepository()
+    val client: TwitterClient by inject()
+    val queryRepository: QueryRepository by inject()
     val service = PepeService(client, queryRepository)
     get("/") {
         val tweets = client.searchByDateAndMultipleHashtags()
@@ -40,10 +40,10 @@ fun Route.javaDayRoutes() = route("/twitter") {
         call.respond(HttpStatusCode.OK, IdResponse(query.id))
     }
 
-    get("/query/{id}/top"){
+    get("/query/{id}/top") {
         // TODO: Maybe command is not the name?
         val command = UUIDCommand(call.parameters["id"])
-        val topTweeters = service.topTweeters(command).map { it.toPair()}.sortedByDescending { it.second }
+        val topTweeters = service.topTweeters(command).map { it.toPair() }.sortedByDescending { it.second }
         call.respond(HttpStatusCode.OK, topTweeters)
     }
 }

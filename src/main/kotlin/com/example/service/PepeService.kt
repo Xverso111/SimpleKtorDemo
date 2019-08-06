@@ -28,7 +28,6 @@ class PepeService(
     //TODO: Buscar Hot Reload
     suspend fun topTweeters(command: UUIDCommand): Map<String, Int> {
         val resultsMap = mutableMapOf<String, Int>()
-        // TODO: In case the query is not found -> the client should be notified on the same request
         val topTweetersQuery = queryRepository.getQuery(command.uuid) ?: throw Exception("Query not found")
         val retrievedTweets = twitterClient.searchByQuery(topTweetersQuery)
         val filteredTweetsByDate = if (topTweetersQuery.dateRange != null) {

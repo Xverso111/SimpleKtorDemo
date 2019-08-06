@@ -52,7 +52,7 @@ class TwitterClient {
     }
 
     fun searchByDateAndMultipleHashtags(): List<Status> {
-//        val query = Query("#JavaDayEcuador AND #GroundbreakersTour -filter:retweets")
+        val query = Query("#JavaDayEcuador AND #GroundbreakersTour -filter:retweets")
 //        val query = Query("#CasaParaTodos")
 
         //query.since("2019-07-22")
