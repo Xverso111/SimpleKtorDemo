@@ -1,5 +1,6 @@
 package com.example.domain
 
+import com.example.exception.BusinessRuleException
 import com.example.service.DateRange
 import com.squareup.moshi.JsonClass
 import twitter4j.Query
@@ -39,7 +40,7 @@ class TweetQuery(
 }
 
 fun <T> List<T>.notEmpty(message: String) =
-    this.takeIf { it.isNotEmpty() } ?: throw Exception(message)
+    this.takeIf { it.isNotEmpty() } ?: throw BusinessRuleException(message)
 
 fun String.notBlank(message: String) =
-    this.takeIf { it.isNotBlank() } ?: throw Exception(message)
+    this.takeIf { it.isNotBlank() } ?: throw BusinessRuleException(message)

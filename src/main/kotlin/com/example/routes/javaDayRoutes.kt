@@ -18,6 +18,7 @@ import java.util.*
 
 fun Route.javaDayRoutes() = route("/twitter") {
 
+    // TODO: Test as a compiled jar
     // TODO: SERDES -> Moshi
     // TODO: Pasar Twitter4J a builder
     // TODO: Usar KConfig para las env variables

@@ -1,5 +1,6 @@
 package com.example.command
 
+import com.example.exception.BusinessRuleException
 import java.util.*
 
 class UUIDCommand(
@@ -14,5 +15,5 @@ fun String?.validUUID(message: String) =
         UUID.fromString(this)
     } catch (exception: Exception) {
         // TODO: Probably use some custom exceptions that represent our domain?
-        throw Exception(message)
+        throw BusinessRuleException(message)
     }
