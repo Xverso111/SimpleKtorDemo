@@ -37,5 +37,5 @@ private class Json(moshi: Moshi): ColumnType() {
     }
 
     override fun notNullValueToDB(value: Any): Any = adapter.toJson(value as List<String>)
-    override fun nonNullValueToString(value: Any): String = adapter.toJson(value as List<String>)
+    override fun valueToString(value: Any?): String = adapter.toJson(value as List<String>)
 }
