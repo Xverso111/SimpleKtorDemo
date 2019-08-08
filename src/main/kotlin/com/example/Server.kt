@@ -8,7 +8,7 @@ import com.example.serializer.UUIDAdapter
 import com.ryanharter.ktor.moshi.moshi
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.JsonDataException
-import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import com.squareup.moshi.Moshi
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -25,6 +25,11 @@ import io.ktor.server.netty.Netty
 import io.ktor.server.netty.NettyApplicationEngine
 import org.koin.ktor.ext.Koin
 
+val moshi: Moshi =  Moshi
+    .Builder()
+    .add(DateTimeAdapter())
+    .add(UUIDAdapter())
+    .build()
 
 class Server {
 
@@ -33,10 +38,7 @@ class Server {
             modules(injectionModule)
         }
         install(ContentNegotiation) {
-            moshi {
-                add(DateTimeAdapter())
-                add(UUIDAdapter())
-            }
+            moshi(moshi)
         }
 
         install(StatusPages) {

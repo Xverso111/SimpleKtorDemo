@@ -1,5 +1,0 @@
-CREATE TABLE hash_tag (
-  id SERIAL PRIMARY KEY,
-  id_query UUID NOT NULL REFERENCES query(id),
-  text VARCHAR(50) NOT NULL
-);

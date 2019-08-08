@@ -1,6 +1,7 @@
 package com.example.repository
 
 import com.example.domain.TweetQuery
+import com.example.moshi
 import com.example.service.DateRange
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -22,48 +23,33 @@ class QueryRepository {
                     it[id] = query.id
                     it[name] = query.name
                     // TODO: I switch to Joda Datetime which was easier to integrate with everything(JSON SerDes and Exposed), should we keep it?
+                    it[hashTags] = query.hashTags
                     it[startDate] = query.dateRange?.start?.toDateTime()
                     it[endDate] = query.dateRange?.end?.toDateTime()
                     it[allowRetweets] = query.allowRetweets
                 }
-
-                insertHashTags(query.hashTags, query.id)
             }
         }
-
-    private fun insertHashTags(hashTags: List<String>, queryId: UUID) =
-        HashtagTable.batchInsert(hashTags) {
-            this[HashtagTable.idQuery] = queryId
-            this[HashtagTable.text] = it
-        }.map { it[HashtagTable.id] }
 
     suspend fun getQuery(id: UUID) =
         withContext(Dispatchers.IO) {
             transaction {
                 QueryTable
-                    .innerJoin(HashtagTable)
                     .select { QueryTable.id eq id }
-                    .asSequence()
-                    .groupBy { it[QueryTable.id] }
                     .map {
-                        it.value.first().let { row ->
-                            TweetQuery(
-                                row[QueryTable.id],
-                                row[QueryTable.name],
-                                it.value.map { hashtag ->
-                                    hashtag[HashtagTable.text]
-                                },
-                                row[QueryTable.startDate]?.let {
-                                    DateRange(
-                                        // TODO: Explain that double bangs should be avoided at all costs!!!
-                                        row[QueryTable.startDate]!!.toLocalDateTime(),
-                                        row[QueryTable.endDate]!!.toLocalDateTime()
-                                    )
-                                },
-                                row[QueryTable.allowRetweets]
-                            )
-                        }
-
+                        TweetQuery(
+                            it[QueryTable.id],
+                            it[QueryTable.name],
+                            it[QueryTable.hashTags],
+                            it[QueryTable.startDate]?.let { pepe ->
+                                DateRange(
+                                    // TODO: Explain that double bangs should be avoided at all costs!!!
+                                    it[QueryTable.startDate]!!.toLocalDateTime(),
+                                    it[QueryTable.endDate]!!.toLocalDateTime()
+                                )
+                            },
+                            it[QueryTable.allowRetweets]
+                        )
                     }.firstOrNull()
         }
     }
@@ -77,11 +63,12 @@ object QueryTable: Table("query") {
     val startDate = datetime("start_date").nullable()
     val endDate = datetime("end_date").nullable()
     // TODO: save the hashtags on a JSONB array
+    val hashTags = jsonb("hash_tags", moshi)
     val allowRetweets = bool("allow_retweets")
 }
-
-object HashtagTable: Table("hash_tag") {
-    val id = integer("id").autoIncrement().primaryKey()
-    val idQuery = uuid("id_query").references(QueryTable.id)
-    val text = varchar("text", 50)
-}
+//
+//object HashtagTable: Table("hash_tag") {
+//    val id = integer("id").autoIncrement().primaryKey()
+//    val idQuery = uuid("id_query").references(QueryTable.id)
+//    val text = varchar("text", 50)
+//}
