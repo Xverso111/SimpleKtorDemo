@@ -44,6 +44,7 @@ fun Route.javaDayRoutes() = route("/twitter") {
     get("/query/{id}/top") {
         // TODO: Maybe command is not the name?
         val command = UUIDCommand(call.parameters["id"])
+        //esto me costo un monton explicar
         val topTweeters = service.topTweeters(command).map { it.toPair() }.sortedByDescending { it.second }
         call.respond(HttpStatusCode.OK, topTweeters)
     }

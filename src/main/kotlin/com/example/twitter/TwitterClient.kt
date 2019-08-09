@@ -71,7 +71,7 @@ class TwitterClient {
         // TODO: Put a 5/3 seconds delay?
         val query = query.toQuery()
         var result = twitter.search(query)
-        val tweets = mutableListOf<Status>().apply { addAll(result.tweets) }
+        val tweets: MutableList<Status> = result.tweets
         while (result.hasNext()) {
             val nextQuery = result.nextQuery()
             result = twitter.search(nextQuery)
@@ -84,7 +84,6 @@ class TwitterClient {
 
 //TODO: Explicar esta cosa
 // TODO: Test this
-@UseExperimental(InternalAPI::class)
 private fun Status.tweet() = Tweet(this.id, this.user.screenName, this.text, LocalDateTime(this.createdAt.toInstant().toEpochMilli()))
 
 

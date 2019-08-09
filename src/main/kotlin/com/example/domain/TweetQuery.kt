@@ -25,6 +25,8 @@ class TweetQuery(
     val name = name
         .notBlank("Cannot create a TweetQuery without a name")
 
+    //String "#Javaday AND "
+    //separar esto a un adapter
     fun toQuery(): Query {
         val queryString = hashTags
             .reduce { acc, hashtag -> "$acc AND $hashtag" }

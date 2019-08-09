@@ -31,10 +31,12 @@ class PepeService(
         val resultsMap = mutableMapOf<String, Int>()
         val topTweetersQuery = queryRepository.getQuery(command.uuid) ?: throw ResourceNotFoundException("Query not found")
         val retrievedTweets = twitterClient.searchByQuery(topTweetersQuery)
+        //mostrar el intent una funcion
         val filteredTweetsByDate = if (topTweetersQuery.dateRange != null) {
             retrievedTweets.filter { topTweetersQuery.dateRange contains it.tweetedDate }
         } else retrievedTweets
 
+        //mover a una funcion
         filteredTweetsByDate.forEach {
             resultsMap[it.userName] = resultsMap[it.userName]?.plus(1) ?: 1
         }
