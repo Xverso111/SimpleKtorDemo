@@ -19,7 +19,6 @@ import io.ktor.features.StatusPages
 import io.ktor.http.HttpStatusCode
 import io.ktor.response.respond
 import io.ktor.routing.routing
-import org.apache.tomcat.dbcp.dbcp2.BasicDataSource
 import org.flywaydb.core.Flyway
 import org.jetbrains.exposed.sql.Database
 import org.koin.dsl.module
@@ -28,16 +27,7 @@ import org.koin.ktor.ext.Koin
 val databaseUser = "pepe"
 val databasePassword = "12345678"
 val databaseUrl = "jdbc:postgresql://localhost/tweet-query-db"
-
-
-// TODO: Hacer como hicimos en Delaware
-fun dataSource() =
-    BasicDataSource().apply {
-        driverClassName = "org.postgresql.Driver"
-        url = databaseUrl
-        username = databaseUser
-        password = databasePassword
-    }
+val databaseDriver = "org.postgresql.Driver"
 
 val injectionModule = module {
     single { TwitterClient() }
@@ -55,11 +45,12 @@ fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
 fun Application.start() {
     executeMigrations()
-    Database.connect(dataSource())
+    Database.connect(databaseUrl, databaseDriver, databaseUser, databasePassword)
 
     install(Koin) {
         modules(injectionModule)
     }
+
     install(ContentNegotiation) {
         moshi(moshi)
     }
