@@ -12,20 +12,23 @@ class TwitterClient {
     // TODO: El resultado debería ser guardado en algún lado para luego ser consultado
     // TODO: 180 requests cada 15 mins -> 1 request every 5 seconds
     fun searchByQuery(query: Query) =
-        TwitterPepe(twitter, query)
+        twitter
+            .query(query)
             .flatMap { it.tweets }
             .map { it.toTweet() }
 
 }
 
-private class TwitterPepe(
+fun Twitter.query(query: Query) = TwitterQuery(this, query)
+
+class TwitterQuery(
     private val twitter: Twitter,
     private val query: Query
 ): Iterable<QueryResult> {
     override fun iterator() = TwitterQueryIterator(twitter, query)
 }
 
-private class TwitterQueryIterator(
+class TwitterQueryIterator(
     private val twitter: Twitter,
     query: Query
 ): Iterator<QueryResult> {
