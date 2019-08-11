@@ -1,10 +1,8 @@
 package com.example.domain
 
-import com.example.exception.BusinessRuleException
-import com.example.service.DateRange
+import com.example.validation.notBlank
+import com.example.validation.notEmpty
 import com.squareup.moshi.JsonClass
-import twitter4j.Query
-import java.util.*
 
 //TODO:completar validaciones o reglas de negocio y escribir las pruebas
 //TODO: change the name of this class -> when colliding with Twitter4j query use aliases
@@ -25,9 +23,3 @@ class SearchCriteria(
     val name = name
         .notBlank("Cannot create a SearchCriteria without a name")
 }
-
-fun <T> List<T>.notEmpty(message: String) =
-    this.takeIf { it.isNotEmpty() } ?: throw BusinessRuleException(message)
-
-fun String.notBlank(message: String) =
-    this.takeIf { it.isNotBlank() } ?: throw BusinessRuleException(message)

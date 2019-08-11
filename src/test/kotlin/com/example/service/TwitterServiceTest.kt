@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test
 import java.time.LocalDateTime
 
 //TODO: la primera ves que usemos un list of comentar que es mas legible que el metodo of que tiene java 9
-class PepeServiceTest {
+class TwitterServiceTest {
 
     @Test
     fun `should return a map of tweets`() {
@@ -22,7 +22,7 @@ class PepeServiceTest {
 
         every { twitterClient.searchByQuery(any()) } returns listOf(tweet)
 
-        val topTable = PepeService(twitterClient).topTweeters()
+        val topTable = TwitterService(twitterClient).topTweeters()
 
         assertThat(topTable).containsAllEntriesOf(expectedTable)
     }
@@ -40,7 +40,7 @@ class PepeServiceTest {
 
         every { twitterClient.searchByQuery(any()) } returns listOf(tweet, tweet, secondTweet)
 
-        val topTable = PepeService(twitterClient).topTweeters()
+        val topTable = TwitterService(twitterClient).topTweeters()
 
         assertThat(topTable).containsAllEntriesOf(expectedTable)
     }
@@ -58,7 +58,7 @@ class PepeServiceTest {
 
         every { twitterClient.searchByQuery(any()) } returns listOf(tweetInsideRange, tweetBelowRange, tweetAboveRange)
 
-        val topTable = PepeService(twitterClient).topTweeters(dateRange)
+        val topTable = TwitterService(twitterClient).topTweeters(dateRange)
 
         assertThat(topTable).doesNotContainKeys(tweetBelowRange.userName, tweetAboveRange.userName)
         assertThat(topTable).containsKeys(tweetInsideRange.userName)

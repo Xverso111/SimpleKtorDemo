@@ -1,20 +1,17 @@
 package com.example
 
+import com.example.dto.Error
 import com.example.exception.BusinessRuleException
 import com.example.exception.ResourceNotFoundException
 import com.example.repository.SearchCriteriaRepository
-import com.example.routes.javaDayRoutes
+import com.example.routes.routes
 import com.example.serializer.DateTimeAdapter
 import com.example.serializer.UUIDAdapter
-import com.example.service.PepeService
-import com.example.service.TopTweetResult
+import com.example.service.TwitterService
 import com.example.twitter.TwitterClient
 import com.ryanharter.ktor.moshi.moshi
-import com.squareup.moshi.JsonClass
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
-import com.squareup.moshi.Types
-import com.squareup.moshi.Types.newParameterizedType
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -36,7 +33,7 @@ val databaseDriver = "org.postgresql.Driver"
 val injectionModule = module {
     single { TwitterClient() }
     single { SearchCriteriaRepository() }
-    single { PepeService(get(), get()) }
+    single { TwitterService(get(), get()) }
 }
 
 val moshi: Moshi =  Moshi
@@ -62,22 +59,20 @@ fun Application.start() {
 
     install(StatusPages) {
         exception<Throwable> {
+            val message = it.message ?: "Unknown error"
             val code = when(it) {
                 is JsonDataException, is BusinessRuleException -> HttpStatusCode.BadRequest
                 is ResourceNotFoundException -> HttpStatusCode.NotFound
                 else -> HttpStatusCode.InternalServerError
             }
-            call.respond(code, Error(it.message ?: "Unknown error", it.javaClass.simpleName))
+            call.respond(code, Error(message, it.javaClass.simpleName))
         }
     }
 
     routing {
-        javaDayRoutes()
+        routes()
     }
 }
-
-@JsonClass(generateAdapter = true)
-data class Error(val message: String, val exception: String)
 
 fun executeMigrations() =
     Flyway

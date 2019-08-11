@@ -2,14 +2,13 @@ package com.example.service
 
 import com.example.adapter.QueryAdapter
 import com.example.domain.SearchCriteria
+import com.example.dto.TopTweetResult
 import com.example.exception.ResourceNotFoundException
 import com.example.repository.SearchCriteriaRepository
 import com.example.twitter.TwitterClient
-import com.squareup.moshi.JsonClass
-import org.joda.time.LocalDateTime
 import java.util.*
 
-class PepeService(
+class TwitterService(
     private val twitterClient: TwitterClient,
     private val searchCriteriaRepository: SearchCriteriaRepository
 ) {
@@ -22,6 +21,7 @@ class PepeService(
     //TODO: Buscar Hot Reload
     fun topTweeters(uuid: UUID): List<TopTweetResult> {
         val topTweetersQuery = searchCriteriaRepository.getQuery(uuid) ?: throw ResourceNotFoundException("Query not found")
+        // TODO: Is this adapter correct, should it be a class or a function?
         val retrievedTweets = twitterClient.searchByQuery(QueryAdapter(topTweetersQuery).query)
         //mostrar el intent una funcion
         //mover a una funcion
@@ -30,26 +30,6 @@ class PepeService(
             .groupBy { it.userName }
             .map { TopTweetResult(it.key, it.value.size) }
     }
-}
-
-@JsonClass(generateAdapter = true)
-data class TopTweetResult(val name: String, val count: Int)
-
-// TODO: usar un Object
-// TODO: data class -> overrides equals/hashcode/toString...
-@JsonClass(generateAdapter = true)
-data class DateRange(
-    val start: LocalDateTime,
-    val end: LocalDateTime
-) {
-
-    // validar from is before to
-
-    infix fun contains(date: LocalDateTime) = date.isBetween(start, end)
-
-    private fun LocalDateTime.isBetween(start: LocalDateTime, end: LocalDateTime) = this.isAfterOrEqual(start) && this.isBeforeOrEqual(end)
-    private fun LocalDateTime.isAfterOrEqual(date: LocalDateTime) = this.isAfter(date) || this.isEqual(date)
-    private fun LocalDateTime.isBeforeOrEqual(date: LocalDateTime) = this.isBefore(date) || this.isEqual(date)
 }
 
 // TODO: Mencionar que tal ves sea mejor devolver un data class con el nombre de usuario, Id y acumulado
