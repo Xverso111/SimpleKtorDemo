@@ -19,14 +19,7 @@ class TwitterClient {
 
 }
 
-fun Twitter.query(query: Query) = TwitterQuery(this, query)
-
-class TwitterQuery(
-    private val twitter: Twitter,
-    private val query: Query
-): Iterable<QueryResult> {
-    override fun iterator() = TwitterQueryIterator(twitter, query)
-}
+fun Twitter.query(query: Query) = Iterable { TwitterQueryIterator(this, query) }
 
 class TwitterQueryIterator(
     private val twitter: Twitter,
