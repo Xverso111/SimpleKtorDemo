@@ -3,6 +3,7 @@ package com.example.twitter
 import com.example.domain.Tweet
 import com.example.domain.SearchCriteria
 import org.joda.time.LocalDateTime
+import twitter4j.Query
 import twitter4j.Status
 import twitter4j.TwitterFactory
 
@@ -13,10 +14,9 @@ class TwitterClient {
     // TODO: Esto debería lanzarse en una coroutine. Porque puede tomar mucho tiempo
     // TODO: El resultado debería ser guardado en algún lado para luego ser consultado
     // TODO: 180 requests cada 15 mins -> 1 request every 5 seconds
-    fun searchByQuery(searchCriteria: SearchCriteria):List<Tweet> {
+    fun searchByQuery(query: Query):List<Tweet> {
         // TODO: Hacer esto más funcional?
         // TODO: Put a 5/3 seconds delay?
-        val query = searchCriteria.toQuery()
         var result = twitter.search(query)
         val tweets: MutableList<Status> = result.tweets
         while (result.hasNext()) {

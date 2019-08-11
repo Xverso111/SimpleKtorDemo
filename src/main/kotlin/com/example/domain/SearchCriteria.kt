@@ -24,21 +24,6 @@ class SearchCriteria(
 
     val name = name
         .notBlank("Cannot create a SearchCriteria without a name")
-
-    //String "#Javaday AND "
-    //TODO: separar esto a un adapter
-    fun toQuery(): Query {
-        val queryString = hashTags
-            .reduce { acc, hashtag -> "$acc AND $hashtag" }
-            .plus(if(allowRetweets) "-filter:retweets" else "")
-
-        return Query(queryString).apply {
-            dateRange?.let {
-                since = it.start.toString()
-                until = it.end.toString()
-            }
-        }
-    }
 }
 
 fun <T> List<T>.notEmpty(message: String) =

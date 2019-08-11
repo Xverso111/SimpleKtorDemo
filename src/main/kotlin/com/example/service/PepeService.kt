@@ -1,5 +1,6 @@
 package com.example.service
 
+import com.example.adapter.QueryAdapter
 import com.example.domain.SearchCriteria
 import com.example.exception.ResourceNotFoundException
 import com.example.repository.SearchCriteriaRepository
@@ -21,7 +22,7 @@ class PepeService(
     //TODO: Buscar Hot Reload
     fun topTweeters(uuid: UUID): List<TopTweetResult> {
         val topTweetersQuery = searchCriteriaRepository.getQuery(uuid) ?: throw ResourceNotFoundException("Query not found")
-        val retrievedTweets = twitterClient.searchByQuery(topTweetersQuery)
+        val retrievedTweets = twitterClient.searchByQuery(QueryAdapter(topTweetersQuery).query)
         //mostrar el intent una funcion
         //mover a una funcion
         return retrievedTweets

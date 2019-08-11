@@ -42,7 +42,7 @@ fun Route.javaDayRoutes() = route("/twitter") {
     }
 }
 
-fun String?.validUUID(message: String) =
+fun String?.validUUID(message: String): UUID =
     try {
         UUID.fromString(this)
     } catch (exception: Exception) {
