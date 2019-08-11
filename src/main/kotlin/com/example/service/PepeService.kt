@@ -1,48 +1,38 @@
 package com.example.service
 
-import com.example.command.UUIDCommand
-import com.example.domain.TweetQuery
+import com.example.domain.SearchCriteria
 import com.example.exception.ResourceNotFoundException
-import com.example.repository.QueryRepository
+import com.example.repository.SearchCriteriaRepository
 import com.example.twitter.TwitterClient
 import com.squareup.moshi.JsonClass
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.launch
-import org.jetbrains.exposed.sql.transactions.transaction
 import org.joda.time.LocalDateTime
 import java.util.*
 
 class PepeService(
     private val twitterClient: TwitterClient,
-    private val queryRepository: QueryRepository
+    private val searchCriteriaRepository: SearchCriteriaRepository
 ) {
 
     // TODO: How to test suspend functions
-    suspend fun createQuery(query: TweetQuery) {
+    fun createQuery(query: SearchCriteria) = searchCriteriaRepository.insertQuery(query)
         // TODO: Can I have service level transactions like Spring? How can we make the same on javascript?
         // TODO: Verify duplicated name
-        queryRepository.insertQuery(query)
-    }
 
     //TODO: Buscar Hot Reload
-    suspend fun topTweeters(command: UUIDCommand): Map<String, Int> {
-        val resultsMap = mutableMapOf<String, Int>()
-        val topTweetersQuery = queryRepository.getQuery(command.uuid) ?: throw ResourceNotFoundException("Query not found")
+    fun topTweeters(uuid: UUID): List<TopTweetResult> {
+        val topTweetersQuery = searchCriteriaRepository.getQuery(uuid) ?: throw ResourceNotFoundException("Query not found")
         val retrievedTweets = twitterClient.searchByQuery(topTweetersQuery)
         //mostrar el intent una funcion
-        val filteredTweetsByDate = if (topTweetersQuery.dateRange != null) {
-            retrievedTweets.filter { topTweetersQuery.dateRange contains it.tweetedDate }
-        } else retrievedTweets
-
         //mover a una funcion
-        filteredTweetsByDate.forEach {
-            resultsMap[it.userName] = resultsMap[it.userName]?.plus(1) ?: 1
-        }
-        return resultsMap
+        return retrievedTweets
+            .filter { topTweetersQuery.dateRange?.contains(it.tweetedDate) ?: true }
+            .groupBy { it.userName }
+            .map { TopTweetResult(it.key, it.value.size) }
     }
 }
+
+@JsonClass(generateAdapter = true)
+data class TopTweetResult(val name: String, val count: Int)
 
 // TODO: usar un Object
 // TODO: data class -> overrides equals/hashcode/toString...

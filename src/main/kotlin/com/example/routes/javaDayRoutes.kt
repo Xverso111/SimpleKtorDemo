@@ -1,10 +1,8 @@
 package com.example.routes
 
-import com.example.command.UUIDCommand
-import com.example.domain.TweetQuery
-import com.example.repository.QueryRepository
+import com.example.domain.SearchCriteria
+import com.example.exception.BusinessRuleException
 import com.example.service.PepeService
-import com.example.twitter.TwitterClient
 import io.ktor.application.call
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
@@ -26,28 +24,30 @@ fun Route.javaDayRoutes() = route("/twitter") {
     // TODO: Persistencia
     // TODO: inyeccion de dependencias
     // TODO: Set up exception handling -> StatusPages
-    val client: TwitterClient by inject()
-    val queryRepository: QueryRepository by inject()
-    val service = PepeService(client, queryRepository)
-    get("/") {
-        val tweets = client.searchByDateAndMultipleHashtags()
-        call.respond(tweets)
-    }
+    val service: PepeService by inject()
 
     post("/query") {
-        val query = call.receive<TweetQuery>()
-        service.createQuery(query)
+        val searchCriteria = call.receive<SearchCriteria>()
+        val id = service.createQuery(searchCriteria)
         // TODO: Should we return just the ID or the whole object with the id? -> Check Rest standards
-        call.respond(HttpStatusCode.OK, IdResponse(query.id))
+        call.respond(HttpStatusCode.OK, IdResponse(id))
     }
 
     get("/query/{id}/top") {
         // TODO: Maybe command is not the name?
-        val command = UUIDCommand(call.parameters["id"])
-        //esto me costo un monton explicar
-        val topTweeters = service.topTweeters(command).map { it.toPair() }.sortedByDescending { it.second }
+        // TODO: Get rid of the command?
+        val uuid = call.parameters["id"].validUUID("The id is not valid")
+        val topTweeters = service.topTweeters(uuid)
         call.respond(HttpStatusCode.OK, topTweeters)
     }
 }
+
+fun String?.validUUID(message: String) =
+    try {
+        UUID.fromString(this)
+    } catch (exception: Exception) {
+        // TODO: Probably use some custom exceptions that represent our domain?
+        throw BusinessRuleException(message)
+    }
 
 data class IdResponse(val id: UUID)

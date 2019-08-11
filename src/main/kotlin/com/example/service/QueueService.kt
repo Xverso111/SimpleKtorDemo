@@ -1,7 +1,7 @@
 package com.example.service
 
 import com.example.domain.Tweet
-import com.example.domain.TweetQuery
+import com.example.domain.SearchCriteria
 import com.example.twitter.TwitterClient
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -29,6 +29,6 @@ class QueueService(
 }
 
 class ExecuteQuery(
-    val query: TweetQuery,
+    val query: SearchCriteria,
     val onComplete: suspend (List<Tweet>) -> Unit
 )

@@ -1,75 +1,22 @@
 package com.example.twitter
 
 import com.example.domain.Tweet
-import com.example.domain.TweetQuery
-import io.ktor.util.InternalAPI
-import io.ktor.util.toLocalDateTime
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import com.example.domain.SearchCriteria
 import org.joda.time.LocalDateTime
-import twitter4j.Query
 import twitter4j.Status
 import twitter4j.TwitterFactory
 
 
 class TwitterClient {
     private val twitter = TwitterFactory.getSingleton()
-    // #JavaDayEcuador since:2019-07-22 until:2019-07-24
-    // #JavaDayEcuador AND #JavaDayGuatemala since:2019-07-22 until:2019-07-25
-    private val query = Query("#JavaDayEcuador -filter:retweets").apply {
-        since("2019-07-22")
-        until("2019-07-24")
-        resultType(Query.ResultType.recent)
-    }
-
-    fun searchByHashTag(hashTag: String): List<Status> {
-        val query = Query(hashTag)
-        val result = twitter.search(query)
-
-        return result.tweets
-    }
-
-    fun count(): Int {
-//        val query = Query("#SimplificaciónDeTrámitesEc")
-        query.count = 1000
-        var result = twitter.search(query)
-        val tweets = mutableListOf<Status>().apply { addAll(result.tweets) }
-        println("****************size${tweets.size}")
-        println("****************${result.count}")
-        var contador = 0
-        while (result.hasNext()) {
-            contador++
-            if (contador % 10 == 0) {
-                println("---------------$contador")
-            }
-//            println("------------------------------ hay mas")
-            val nextQuery = result.nextQuery()
-            result = twitter.search(nextQuery)
-            tweets.addAll(result.tweets)
-        }
-        println("-------------------------------- moriste ${tweets.size}")
-        return tweets.size
-    }
-
-    fun searchByDateAndMultipleHashtags(): List<Status> {
-        val query = Query("#JavaDayEcuador AND #GroundbreakersTour -filter:retweets")
-//        val query = Query("#CasaParaTodos")
-
-        //query.since("2019-07-22")
-//        query.until("2019-07-24")
-        //query.resultType(Query.ResultType.recent)
-        val result = twitter.search(query)
-
-        return result.tweets
-    }
 
     // TODO: Esto debería lanzarse en una coroutine. Porque puede tomar mucho tiempo
     // TODO: El resultado debería ser guardado en algún lado para luego ser consultado
     // TODO: 180 requests cada 15 mins -> 1 request every 5 seconds
-    suspend fun searchByQuery(query: TweetQuery):List<Tweet> = withContext(Dispatchers.IO) {
+    fun searchByQuery(searchCriteria: SearchCriteria):List<Tweet> {
         // TODO: Hacer esto más funcional?
         // TODO: Put a 5/3 seconds delay?
-        val query = query.toQuery()
+        val query = searchCriteria.toQuery()
         var result = twitter.search(query)
         val tweets: MutableList<Status> = result.tweets
         while (result.hasNext()) {
@@ -77,13 +24,19 @@ class TwitterClient {
             result = twitter.search(nextQuery)
             tweets.addAll(result.tweets)
         }
-        tweets.map(Status::tweet)
+        return tweets.map(Status::toTweet)
     }
 
 }
 
 //TODO: Explicar esta cosa
 // TODO: Test this
-private fun Status.tweet() = Tweet(this.id, this.user.screenName, this.text, LocalDateTime(this.createdAt.toInstant().toEpochMilli()))
+private fun Status.toTweet() =
+    Tweet(
+        this.id,
+        this.user.screenName,
+        this.text,
+        LocalDateTime(this.createdAt.toInstant().toEpochMilli())
+    )
 
 

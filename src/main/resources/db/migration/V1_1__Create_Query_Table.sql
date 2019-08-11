@@ -1,4 +1,4 @@
-CREATE TABLE query (
+CREATE TABLE search_criteria (
   id UUID PRIMARY KEY,
   name VARCHAR(50) NOT NULL UNIQUE,
   start_date TIMESTAMP,

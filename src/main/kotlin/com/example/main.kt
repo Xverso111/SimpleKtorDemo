@@ -2,15 +2,19 @@ package com.example
 
 import com.example.exception.BusinessRuleException
 import com.example.exception.ResourceNotFoundException
-import com.example.repository.QueryRepository
+import com.example.repository.SearchCriteriaRepository
 import com.example.routes.javaDayRoutes
 import com.example.serializer.DateTimeAdapter
 import com.example.serializer.UUIDAdapter
+import com.example.service.PepeService
+import com.example.service.TopTweetResult
 import com.example.twitter.TwitterClient
 import com.ryanharter.ktor.moshi.moshi
 import com.squareup.moshi.JsonClass
 import com.squareup.moshi.JsonDataException
 import com.squareup.moshi.Moshi
+import com.squareup.moshi.Types
+import com.squareup.moshi.Types.newParameterizedType
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
@@ -31,7 +35,8 @@ val databaseDriver = "org.postgresql.Driver"
 
 val injectionModule = module {
     single { TwitterClient() }
-    single { QueryRepository() }
+    single { SearchCriteriaRepository() }
+    single { PepeService(get(), get()) }
 }
 
 val moshi: Moshi =  Moshi
@@ -56,7 +61,7 @@ fun Application.start() {
     }
 
     install(StatusPages) {
-        exception<Exception> {
+        exception<Throwable> {
             val code = when(it) {
                 is JsonDataException, is BusinessRuleException -> HttpStatusCode.BadRequest
                 is ResourceNotFoundException -> HttpStatusCode.NotFound

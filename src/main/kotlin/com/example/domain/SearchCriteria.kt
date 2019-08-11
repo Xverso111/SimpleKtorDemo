@@ -8,9 +8,9 @@ import java.util.*
 
 //TODO:completar validaciones o reglas de negocio y escribir las pruebas
 //TODO: change the name of this class -> when colliding with Twitter4j query use aliases
+//TODO: Search Criteria
 @JsonClass(generateAdapter = true)
-class TweetQuery(
-    val id: UUID = UUID.randomUUID(),
+class SearchCriteria(
     name: String,
     hashTags: List<String>,
     val dateRange: DateRange? = null,
@@ -20,13 +20,13 @@ class TweetQuery(
     // TODO: Hashtags shouldn't include #, should be manually put
 
     val hashTags = hashTags
-        .notEmpty("Cannot create a TweetQuery without hashTags")
+        .notEmpty("Cannot create a SearchCriteria without hashTags")
 
     val name = name
-        .notBlank("Cannot create a TweetQuery without a name")
+        .notBlank("Cannot create a SearchCriteria without a name")
 
     //String "#Javaday AND "
-    //separar esto a un adapter
+    //TODO: separar esto a un adapter
     fun toQuery(): Query {
         val queryString = hashTags
             .reduce { acc, hashtag -> "$acc AND $hashtag" }
